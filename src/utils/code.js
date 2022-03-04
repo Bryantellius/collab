@@ -26,7 +26,7 @@ function getAbbr(language) {
 
 function parsePid(param) {
   let res = param.split("-");
-  res[0] = getLang("." + res[0]);
+  res[0] = getLang("." + res[0].toLowerCase());
   return res;
 }
 

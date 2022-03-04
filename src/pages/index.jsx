@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import id_16 from "id-16";
 import { getAbbr } from "../utils/code";
+import logo from "../assets/brand/cover-transparent.png";
 
 export default function Home() {
   const [language, setLanguage] = useState("javascript");
@@ -22,11 +23,12 @@ export default function Home() {
   return (
     <Layout>
       <div className="container text-center">
-        <h1>Welcome to Collab! 👋</h1>
-        <p>
-          This is a place where you can create a coding room and dev out with
-          another programmer!
-        </p>
+        <div className="max-w-600 mx-auto my-4">
+          <img src={logo} className="hero" alt="Collab" />
+          <p>
+            Join or create a coding room and dev out with other programmers!
+          </p>
+        </div>
         <hr />
         <h2>What would you like to do?</h2>
         <div className="row my-3">
@@ -52,8 +54,26 @@ export default function Home() {
                     <option value="python">Python</option>
                   </select>
                   <div className="input-group-append">
-                    <button className="btn btn-success" onClick={createRoom}>
-                      Create
+                    <button
+                      className="btn btn-success"
+                      onClick={createRoom}
+                      title="Create a room"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="feather feather-plus"
+                      >
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
                     </button>
                   </div>
                 </div>
@@ -86,8 +106,25 @@ export default function Home() {
                       className="btn btn-primary"
                       disabled={roomId.length > 9 || roomId.length < 9}
                       onClick={joinRoom}
+                      title="Join a room"
                     >
-                      Join
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="feather feather-user-plus"
+                      >
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <line x1="20" y1="8" x2="20" y2="14"></line>
+                        <line x1="23" y1="11" x2="17" y2="11"></line>
+                      </svg>
                     </button>
                   </div>
                 </div>

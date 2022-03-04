@@ -30,11 +30,11 @@ body {
 }
 
 a {
-  color: lightblue;
+  color: #eee;
 }
 
 a:visited {
-  color: lightsalmon;
+  color: lightblue;
 }
 
 li,
@@ -58,6 +58,12 @@ hr {
 .max-w-600 {
   max-width: 600px;
   width: 100%;
+}
+
+.hero {
+  max-width: 600px;
+  width: 100%;
+  margin: 2rem 0;
 }
 
 .console {
