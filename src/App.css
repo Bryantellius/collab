@@ -1,38 +1,116 @@
-.App {
-  text-align: center;
+@import url(../node_modules/bootstrap/dist/css/bootstrap.min.css);
+
+:root {
+  --font-size: 20px;
+  --regular-dark-bg: #333;
+  --ligher-dark-bg: #555;
+  --regular-dark-text: #eee;
+  --background-svg: url(assets/bg.svg);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+html {
+  font-size: var(--font-size);
 }
 
-.App-header {
-  background-color: #282c34;
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans,
+    sans-serif, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  padding: 0;
+  margin: 0;
+  color: var(--regular-dark-text);
+  background-color: var(--regular-dark-bg);
+  background-image: var(--background-svg);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+a {
+  color: lightblue;
+}
+
+a:visited {
+  color: lightsalmon;
+}
+
+li,
+p {
+  line-height: 1.5rem;
+}
+
+a {
+  font-weight: 500;
+}
+
+hr {
+  border: 1px solid #ddd;
+}
+
+.min-h-100 {
   min-height: 100vh;
+  height: fit-content;
+}
+
+.max-w-600 {
+  max-width: 600px;
+  width: 100%;
+}
+
+.console {
+  background: #000;
+  border: 1px solid #000;
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  min-height: 200px;
+  height: fit-content;
+  white-space: pre-wrap;
+}
+
+.card-dark {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* LOADER */
+.full-screen {
+  height: 100vh;
+  width: 100vw;
+  z-index: 9;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
 }
 
-.App-link {
-  color: #61dafb;
+.loader {
+  animation: rotate 2s linear infinite;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
+@keyframes rotate {
+  100% {
     transform: rotate(360deg);
+  }
+}
+
+.loader circle {
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
   }
 }
