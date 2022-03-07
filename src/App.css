@@ -71,10 +71,9 @@ hr {
   border: 1px solid #000;
   width: 100%;
   padding: 0.5rem;
-  border-radius: 0.5rem;
   width: 100%;
   min-height: 200px;
-  height: fit-content;
+  height: 100%;
   white-space: pre-wrap;
 }
 

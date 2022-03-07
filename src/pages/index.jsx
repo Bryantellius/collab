@@ -1,6 +1,6 @@
 import Layout from "../components/layout";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import logo from "../assets/brand/cover-transparent.png";
 import Alert from "../components/Alert";
 
@@ -10,6 +10,7 @@ export default function Home() {
   const [roomId, setRoomId] = useState("");
 
   const navigate = useNavigate();
+  let recentRooms = JSON.parse(localStorage.getItem("recentRooms") || "[]");
 
   const createRoom = async () => {
     try {
@@ -47,6 +48,8 @@ export default function Home() {
       setAlertMessage(e.msg);
     }
   };
+
+  console.log(recentRooms);
 
   return (
     <Layout>
@@ -163,6 +166,17 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+          <hr className="my-4" />
+          <div className="col-12 my-4">
+            <h3>Recents</h3>
+            <div className="row">
+              {recentRooms.map((roomId) => (
+                <Link key={roomId} to={`/editor/${roomId}`} className="col-lg-3 col-md-4 col-sm-6">
+                  {roomId}
+                </Link>
+              ))}
             </div>
           </div>
         </div>

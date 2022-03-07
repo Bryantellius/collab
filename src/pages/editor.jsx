@@ -42,7 +42,16 @@ export default function Page() {
 
       socket.on("connect", () => {
         console.log("STATUS: connected");
-        socket.emit("join-room", { roomId: pid, user: { name: navigator.userAgent, timestamp: new Date().toString() } });
+        socket.emit("join-room", {
+          roomId: pid,
+          user: { name: navigator.userAgent, timestamp: new Date().toString() },
+        });
+        let recentRooms = JSON.parse(
+          localStorage.getItem("recentRooms") || "[]"
+        );
+        recentRooms.push(pid);
+        if (recentRooms.length > 5) recentRooms.shift();
+        localStorage.setItem("recentRooms", JSON.stringify(recentRooms));
         setIsConnected(true);
         socket.on("update-code", (value) => setCode(value));
         socket.on("run-code", ({ output }) => setOutput(output));
@@ -104,7 +113,7 @@ export default function Page() {
 
   useEffect(() => {
     if (pid) initializeSocket();
-    return () => socket.removeListeners();
+    return () => (socket = null);
   }, [pid]);
 
   if (!isLoaded) {
@@ -150,6 +159,12 @@ export default function Page() {
             }}
           ></sup>
         </p>
+        <button
+          className="btn btn-sm btn-outline-light"
+          onClick={(e) => navigator.clipboard.writeText(window.location.href)}
+        >
+          Copy Invite Link
+        </button>
         <div className="d-flex justify-content-end align-items-center my-1">
           <div className="btn-group">
             <button
@@ -198,8 +213,8 @@ export default function Page() {
             </button>
           </div>
         </div>
-        <div className="row">
-          <div className="col-lg-6">
+        <div className="row align-items-stretch px-1">
+          <div className="col-lg-6 p-0">
             <Editor
               value={code}
               language={language}
@@ -207,7 +222,7 @@ export default function Page() {
               style={{ width: "100%", minHeight: "300px" }}
             />
           </div>
-          <div className="col-lg-6">
+          <div className="col-lg-6 p-0">
             <Console value={output.stderr || output.stdout} />
           </div>
         </div>
