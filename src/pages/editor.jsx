@@ -4,80 +4,107 @@ import { useState, useEffect } from "react";
 import io from "socket.io-client";
 import Console from "../components/Console";
 import { useParams } from "react-router-dom";
-import { parsePid } from "../utils/code";
 import Editor from "../components/Editor";
+import Alert from "../components/Alert";
 
 let socket;
 
 export default function Page() {
   const serverURL = process.env.REACT_APP_SERVER_URL;
-  console.log(serverURL);
   const { pid } = useParams();
 
+  const [alertMessage, setAlertMessage] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [code, setCode] = useState("");
   const [output, setOutput] = useState({ stdout: "" });
+  const [members, setMembers] = useState([]);
+  const [modalMessage, setModalMessage] = useState("");
   const [language, setLanguage] = useState(null);
   const [roomId, setRoomId] = useState(null);
 
   const onChange = (updatedCode) => {
-    setCode(updatedCode);
-    socket.emit("code-change", updatedCode);
+    try {
+      setCode(updatedCode);
+      socket.emit("code-change", updatedCode);
+    } catch (e) {
+      setAlertMessage("Failed to update code");
+    }
   };
 
   const initializeSocket = async () => {
-    const [language, roomId] = parsePid(pid);
+    try {
+      let queryParams = "?roomId=" + pid;
+      let res = await fetch(serverURL + "api/room/info" + queryParams);
+      let data = await res.json();
 
-    setLanguage(language);
-    setRoomId(roomId);
+      socket = io(serverURL);
 
-    await fetch("/api/socket");
-    socket = io(serverURL);
-
-    socket.on("connect", () => {
-      console.log("STATUS: connected");
-      socket.emit("join-room", { pid, user: { name: "Ben" } });
-      setIsConnected(true);
-      socket.on("update-code", (value) => setCode(value));
-      socket.on("code-run", onRun);
-    });
-
-    setIsLoaded(true);
-  };
-
-  const onRun = async (input) => {
-    console.log("RUNNING CODE");
-    if (!input)
-      socket.emit("run-code", {
-        fromName: "main",
-        fromContent: code,
-        fromLanguage: language,
+      socket.on("connect", () => {
+        console.log("STATUS: connected");
+        socket.emit("join-room", { roomId: pid, user: { name: navigator.userAgent, timestamp: new Date().toString() } });
+        setIsConnected(true);
+        socket.on("update-code", (value) => setCode(value));
+        socket.on("run-code", ({ output }) => setOutput(output));
       });
 
-    let body = {
-      name: "main" || input.fromName,
-      content: code || input.fromContent,
-      language: language || input.fromLanguage,
-    };
+      if (data.success) {
+        setMembers(data.info.members);
+        setCode(data.info.code);
+        setLanguage(data.info.language);
+        setRoomId(data.info.roomId);
+      } else {
+        alert(data.message);
+        setModalMessage("Couldn't connect to the room 🙁");
+      }
+      setIsLoaded(true);
+    } catch (e) {
+      setIsLoaded(true);
+      setModalMessage("Can't connect right now. Try again later.");
+    }
+  };
 
-    let res = await fetch(serverURL + "api/code/run", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    let data = await res.json();
-    setOutput(data);
+  const onRun = async () => {
+    console.log("RUNNING CODE");
+
+    try {
+      let body = {
+        name: "main",
+        content: code,
+        language: language,
+      };
+
+      let res = await fetch(serverURL + "api/code/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      let data = await res.json();
+
+      setOutput(data);
+
+      socket.emit("run-code", {
+        output: data,
+      });
+    } catch (e) {
+      setAlertMessage("Failed to execute code");
+    }
   };
 
   const onReset = () => {
-    setCode("");
-    setOutput({ stdout: "" });
-    socket.emit("code-change", "");
+    try {
+      setCode("");
+      setOutput({ stdout: "" });
+      socket.emit("code-change", "");
+    } catch (e) {
+      setAlertMessage("Failed to reset code");
+    }
   };
 
   useEffect(() => {
     if (pid) initializeSocket();
+    return () => socket.removeListeners();
   }, [pid]);
 
   if (!isLoaded) {
@@ -88,14 +115,31 @@ export default function Page() {
     );
   }
 
+  if (modalMessage) {
+    return (
+      <Layout>
+        <div className="max-w-600 mx-auto">
+          <h1>Connection Failure</h1>
+          <p>{modalMessage}</p>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="container">
+        <Alert
+          value={alertMessage}
+          show={Boolean(alertMessage)}
+          type="danger"
+          onClick={() => setAlertMessage("")}
+        />
         <h1>
-          {language} room {pid}
+          {language} room {roomId}
         </h1>
         <p>
-          Socket Status:{" "}
+          Connected:{" "}
           <sup
             style={{
               display: "inline-block",
@@ -120,10 +164,10 @@ export default function Page() {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="feather feather-refresh-ccw"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="feather feather-refresh-ccw"
               >
                 <polyline points="1 4 1 10 7 10"></polyline>
                 <polyline points="23 20 23 14 17 14"></polyline>
@@ -144,10 +188,10 @@ export default function Page() {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="feather feather-play"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="feather feather-play"
               >
                 <polygon points="5 3 19 12 5 21 5 3"></polygon>
               </svg>

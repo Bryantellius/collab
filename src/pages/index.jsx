@@ -1,28 +1,62 @@
 import Layout from "../components/layout";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import id_16 from "id-16";
-import { getAbbr } from "../utils/code";
 import logo from "../assets/brand/cover-transparent.png";
+import Alert from "../components/Alert";
 
 export default function Home() {
+  const [alertMessage, setAlertMessage] = useState("");
   const [language, setLanguage] = useState("javascript");
   const [roomId, setRoomId] = useState("");
 
   const navigate = useNavigate();
-  const id_generator = id_16.generator(6);
 
-  const createRoom = () => {
-    navigate(`/editor/${getAbbr(language)}-${id_generator()}`);
+  const createRoom = async () => {
+    try {
+      let queryParams = "?language=" + language;
+      let results = await fetch(
+        process.env.REACT_APP_SERVER_URL + "api/room/create" + queryParams,
+        { method: "POST" }
+      );
+      let data = await results.json();
+      if (data.success) {
+        navigate(`/editor/${data.roomId}`);
+      } else {
+        throw new Error("Failed to create a room");
+      }
+    } catch (e) {
+      setAlertMessage("Failed to create a room");
+    }
   };
 
   const joinRoom = async () => {
-    navigate(`/editor/${roomId}`);
+    try {
+      let queryParams = "?roomId=" + roomId;
+      let result = await fetch(
+        process.env.REACT_APP_SERVER_URL + "api/room/join" + queryParams
+      );
+      let data = await result.json();
+
+      if (!data.roomId) {
+        throw data;
+      }
+
+      console.log(data.msg);
+      navigate(`/editor/${data.roomId}`);
+    } catch (e) {
+      setAlertMessage(e.msg);
+    }
   };
 
   return (
     <Layout>
       <div className="container text-center">
+        <Alert
+          value={alertMessage}
+          show={Boolean(alertMessage)}
+          type="danger"
+          onClick={() => setAlertMessage("")}
+        />
         <div className="max-w-600 mx-auto my-4">
           <img src={logo} className="hero" alt="Collab" />
           <p>
@@ -66,10 +100,10 @@ export default function Home() {
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="feather feather-plus"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="feather feather-plus"
                       >
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -115,10 +149,10 @@ export default function Home() {
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="feather feather-user-plus"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="feather feather-user-plus"
                       >
                         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="8.5" cy="7" r="4"></circle>
