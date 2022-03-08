@@ -134,3 +134,11 @@ hr {
 .alert-show:hover {
   cursor: pointer;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.p-relative {
+  position: relative;
+}

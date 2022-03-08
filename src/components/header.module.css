@@ -1,6 +1,10 @@
 .header {
   background-color: rgba(0, 0, 0, 0.2);
   margin-bottom: 2rem;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Set min-height to avoid page reflow while session loading */
@@ -100,6 +104,7 @@
   text-align: center;
   margin: 0;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
@@ -111,4 +116,45 @@
 .navItem {
   display: inline-block;
   margin-right: 1rem;
+}
+
+.drawer {
+  /* drawer takes full size */
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: none;
+  z-index: 9999;
+}
+
+.drawerOverlay {
+  /* Take full size */
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+
+  /* User still can see the content of main page */
+  background-color: rgba(0, 0, 0, 0.5);
+
+  z-index: -1;
+}
+
+.drawerSidebar {
+  /* Take full height */
+  height: 100%;
+  right: 0;
+  position: fixed;
+  top: 0;
+  width: 200px;
+  z-index: 9999;
+  /* Background */
+  background-color: #111;
+}
+
+.show {
+  display: block;
 }
