@@ -3,6 +3,7 @@ import Footer from "../components/footer";
 import styles from "./header.module.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import AuthButton from "./auth/AuthButton";
 
 export default function Layout({ children }) {
   const [openNav, setOpenNav] = useState(false);
@@ -37,6 +38,9 @@ export default function Layout({ children }) {
               </li>
               <li className={styles.navItem}>
                 <Link to="/about">About</Link>
+              </li>
+              <li>
+                <AuthButton />
               </li>
             </ul>
           </nav>
