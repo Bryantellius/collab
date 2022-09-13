@@ -39,7 +39,7 @@ export default function Layout({ children }) {
               <li className={styles.navItem}>
                 <Link to="/about">About</Link>
               </li>
-              <li>
+              <li className={styles.navItem}>
                 <AuthButton />
               </li>
             </ul>

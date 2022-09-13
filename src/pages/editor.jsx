@@ -137,7 +137,7 @@ export default function Page() {
 
   return (
     <Layout>
-      <div className="container">
+      <div className="container-fluid">
         <Alert
           value={alertMessage}
           show={Boolean(alertMessage)}

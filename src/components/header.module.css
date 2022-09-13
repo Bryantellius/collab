@@ -115,7 +115,7 @@
 
 .navItem {
   display: inline-block;
-  margin-right: 1rem;
+  margin: 0.5rem 0;
 }
 
 .drawer {
